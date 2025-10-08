@@ -518,6 +518,18 @@ class ThugsIOClient {
         });
     }
 
+    drawBullets() {
+        this.ctx.fillStyle = '#ffff00';
+        this.bullets.forEach(bullet => {
+            const screenX = bullet.x - this.camera.x;
+            const screenY = bullet.y - this.camera.y;
+
+            this.ctx.beginPath();
+            this.ctx.arc(screenX, screenY, 3, 0, Math.PI * 2);
+            this.ctx.fill();
+        });
+    }
+
     drawMinimap() {
         // Clear minimap
         this.miniCtx.fillStyle = '#000';
