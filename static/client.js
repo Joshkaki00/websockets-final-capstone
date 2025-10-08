@@ -11,6 +11,7 @@ class ThugsIOClient {
         this.players = {};
         this.localPlayer = null;
         this.bullets = [];
+        this.policeNPCs = [];
         this.gameStarted = false;
         this.gameStartTime = Date.now();
         this.camera = { x: 0, y: 0 };
