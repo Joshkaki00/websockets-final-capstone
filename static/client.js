@@ -589,10 +589,43 @@ class ThugsIOClient {
             }
         });
         
+        // Update police NPCs
+        if (updateData.police) {
+            this.policeNPCs = updateData.police;
+        }
+        
         // Update UI if local player data changed
         if (this.localPlayer) {
             this.updateHealthUI();
             this.updateMoneyUI();
+            this.updateWantedUI();
+        }
+    }
+
+    handlePoliceKilled(data) {
+        // Add message to chat
+        const killerName = data.killerId.substring(0, 8);
+        this.addSystemMessage(`${killerName} eliminated a police officer (+$50)`, 'police');
+        
+        // Show notification if local player killed police
+        if (data.killerId === this.socket.id) {
+            this.showKillNotification('POLICE OFFICER');
+        }
+    }
+
+    handleWantedLevelChanged(data) {
+        if (this.players[data.playerId]) {
+            this.players[data.playerId].wanted = data.wantedLevel;
+            
+            // Update UI if it's the local player
+            if (data.playerId === this.socket.id) {
+                this.updateWantedUI();
+                
+                // Show wanted level notification
+                if (data.wantedLevel > 0) {
+                    this.showWantedNotification(data.wantedLevel);
+                }
+            }
         }
     }
 
