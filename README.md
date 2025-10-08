@@ -49,7 +49,7 @@ A real-time multiplayer 2D game inspired by early GTA games, built with Socket.I
 ## 📁 Project Structure
 
 ```
-thugs-io/
+websockets-final-capstone/
 ├── static/
 │   ├── client.js     # Client-side game logic
 │   ├── index.html    # Game interface
