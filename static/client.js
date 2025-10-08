@@ -77,6 +77,9 @@ class ThugsIOClient {
                 this.camera.y = this.localPlayer.y - this.canvas.height / 2;
             }
             
+            // Add welcome message
+            this.addSystemMessage('Welcome to Thugs.io! Use WASD to move, mouse to aim, click to shoot.', 'system');
+            
             this.updateLoadingProgress(100);
             setTimeout(() => {
                 this.hideLoadingScreen();
