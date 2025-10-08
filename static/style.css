@@ -1,0 +1,493 @@
+/* Thugs.io - GTA-Inspired Styling */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Orbitron', monospace;
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+    user-select: none;
+}
+
+#gameContainer {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+}
+
+/* Game Canvas */
+#gameCanvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #ff6b00;
+    background: #1a1a1a;
+    cursor: crosshair;
+    box-shadow: 0 0 50px rgba(255, 107, 0, 0.3);
+}
+
+/* Game UI Overlay */
+#gameUI {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* Top HUD */
+#topHUD {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: auto;
+}
+
+#playerStats {
+    display: flex;
+    gap: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px 25px;
+    border: 2px solid #ff6b00;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 107, 0, 0.4);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.stat-label {
+    color: #ff6b00;
+    font-size: 14px;
+}
+
+/* Health Bar */
+.health-bar {
+    width: 100px;
+    height: 20px;
+    background: rgba(255, 0, 0, 0.3);
+    border: 1px solid #ff0000;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.health-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #ff0000, #ff6b00);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 107, 0, 0.6);
+}
+
+/* Wanted Stars */
+#wantedStars {
+    display: flex;
+    gap: 3px;
+}
+
+.star {
+    color: #333;
+    font-size: 18px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    transition: color 0.3s ease;
+}
+
+.star.active {
+    color: #ff6b00;
+    text-shadow: 0 0 10px rgba(255, 107, 0, 0.8);
+}
+
+/* Player Count */
+#playerCount {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px 25px;
+    border: 2px solid #00ff41;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #00ff41;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.6);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+}
+
+/* Minimap */
+#minimap {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 220px;
+    height: 170px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #00ff41;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+}
+
+#minimapCanvas {
+    width: 100%;
+    height: calc(100% - 25px);
+    background: #1a1a1a;
+}
+
+#minimapLabel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 255, 65, 0.2);
+    color: #00ff41;
+    text-align: center;
+    padding: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    text-shadow: 0 0 5px rgba(0, 255, 65, 0.8);
+}
+
+/* Weapon HUD */
+#weaponHUD {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ff6b00;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(255, 107, 0, 0.4);
+}
+
+#weaponName {
+    display: block;
+    color: #ff6b00;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(255, 107, 0, 0.8);
+}
+
+#ammoCount {
+    font-size: 24px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Chat System */
+#chatContainer {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 400px;
+    pointer-events: auto;
+}
+
+#chatMessages {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 107, 0, 0.5);
+    border-radius: 10px;
+    padding: 15px;
+    height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.chat-message {
+    margin-bottom: 8px;
+    word-wrap: break-word;
+}
+
+.chat-player {
+    color: #00ff41;
+    font-weight: 700;
+}
+
+.chat-text {
+    color: #fff;
+}
+
+.chat-timestamp {
+    color: #888;
+    font-size: 12px;
+}
+
+#chatInput {
+    display: flex;
+    gap: 10px;
+}
+
+#messageInput {
+    flex: 1;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #ff6b00;
+    border-radius: 25px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+#messageInput:focus {
+    border-color: #00ff41;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+#sendButton {
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #ff6b00, #ff8c00);
+    border: none;
+    border-radius: 25px;
+    color: #fff;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#sendButton:hover {
+    background: linear-gradient(45deg, #ff8c00, #ffa500);
+    box-shadow: 0 0 15px rgba(255, 107, 0, 0.6);
+}
+
+/* Controls Help */
+#controlsHelp {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 107, 0, 0.5);
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.controls-title {
+    color: #ff6b00;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 0 5px rgba(255, 107, 0, 0.8);
+}
+
+.control-item {
+    margin-bottom: 5px;
+    color: #ccc;
+}
+
+/* Loading Screen */
+#loadingScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #000, #1a1a1a, #2d2d2d);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-content {
+    text-align: center;
+    max-width: 500px;
+}
+
+.loading-content h1 {
+    font-size: 72px;
+    font-weight: 900;
+    color: #ff6b00;
+    text-shadow: 0 0 30px rgba(255, 107, 0, 0.8);
+    margin-bottom: 20px;
+    letter-spacing: 8px;
+}
+
+.loading-subtitle {
+    font-size: 24px;
+    color: #00ff41;
+    margin-bottom: 40px;
+    text-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+}
+
+.loading-bar {
+    width: 400px;
+    height: 10px;
+    background: rgba(255, 107, 0, 0.2);
+    border: 2px solid #ff6b00;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 30px auto;
+    box-shadow: 0 0 20px rgba(255, 107, 0, 0.4);
+}
+
+.loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b00, #00ff41);
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 15px rgba(255, 107, 0, 0.8);
+}
+
+#loadingText {
+    font-size: 18px;
+    color: #ccc;
+    margin-top: 20px;
+}
+
+/* Game Over Screen */
+#gameOverScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.gameover-content {
+    text-align: center;
+    background: rgba(255, 0, 0, 0.1);
+    border: 3px solid #ff0000;
+    border-radius: 20px;
+    padding: 50px;
+    box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
+}
+
+.gameover-content h2 {
+    font-size: 64px;
+    color: #ff0000;
+    text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+    margin-bottom: 30px;
+    font-weight: 900;
+    letter-spacing: 6px;
+}
+
+.gameover-stats {
+    margin: 30px 0;
+    font-size: 18px;
+    line-height: 2;
+}
+
+.gameover-stats div {
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.gameover-stats span {
+    color: #ff6b00;
+    font-weight: 700;
+}
+
+#respawnButton {
+    padding: 15px 40px;
+    font-size: 20px;
+    font-weight: 700;
+    background: linear-gradient(45deg, #ff6b00, #ff0000);
+    border: none;
+    border-radius: 30px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: inherit;
+}
+
+#respawnButton:hover {
+    background: linear-gradient(45deg, #ff8c00, #ff3333);
+    box-shadow: 0 0 25px rgba(255, 107, 0, 0.8);
+    transform: translateY(-2px);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #ff6b00, #00ff41);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #ff8c00, #33ff66);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    #gameCanvas {
+        width: 90vw;
+        height: 67.5vw; /* Maintain 4:3 aspect ratio */
+        max-height: 90vh;
+    }
+    
+    #playerStats {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #chatContainer {
+        width: 300px;
+    }
+    
+    .loading-content h1 {
+        font-size: 48px;
+    }
+}
+
+@media (max-width: 768px) {
+    #topHUD {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #minimap {
+        position: relative;
+        width: 150px;
+        height: 120px;
+        margin: 0 auto;
+    }
+    
+    #controlsHelp {
+        display: none;
+    }
+    
+    .loading-content h1 {
+        font-size: 36px;
+        letter-spacing: 4px;
+    }
+    
+    .loading-bar {
+        width: 300px;
+    }
+}
