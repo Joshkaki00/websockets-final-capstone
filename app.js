@@ -496,6 +496,17 @@ setInterval(() => {
         player.update();
     });
     
+    // Update police NPCs
+    for (let i = policeNPCs.length - 1; i >= 0; i--) {
+        const police = policeNPCs[i];
+        police.update();
+        
+        // Remove dead or inactive police
+        if (!police.isAlive) {
+            policeNPCs.splice(i, 1);
+        }
+    }
+    
     // Update bullets
     for (let i = bullets.length - 1; i >= 0; i--) {
         const bullet = bullets[i];
@@ -513,6 +524,7 @@ setInterval(() => {
     // Update game state
     gameState.players = players;
     gameState.bullets = bullets;
+    gameState.policeNPCs = policeNPCs;
     gameState.gameTime = Date.now();
     
     // Broadcast updated player positions and health
@@ -528,14 +540,28 @@ setInterval(() => {
             isAlive: player.isAlive,
             kills: player.kills,
             deaths: player.deaths,
-            money: player.money
+            money: player.money,
+            wanted: player.wanted
         };
     });
+    
+    // Broadcast police positions
+    const policeUpdates = policeNPCs.map(police => ({
+        id: police.id,
+        x: police.x,
+        y: police.y,
+        angle: police.angle,
+        speed: police.speed,
+        health: police.health,
+        isAlive: police.isAlive,
+        targetId: police.targetId
+    }));
     
     // Send periodic updates (every 10 frames = ~6 times per second)
     if (Date.now() % 166 < 16) { // Roughly every 166ms
         io.emit('gameUpdate', {
             players: playerUpdates,
+            police: policeUpdates,
             bulletCount: bullets.length
         });
     }
