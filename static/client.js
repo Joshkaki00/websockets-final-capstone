@@ -120,6 +120,22 @@ class ThugsIOClient {
             this.addBullet(bulletData);
         });
 
+        this.socket.on('bulletRemoved', (bulletId) => {
+            this.removeBullet(bulletId);
+        });
+
+        this.socket.on('playerHit', (hitData) => {
+            this.handlePlayerHit(hitData);
+        });
+
+        this.socket.on('playerDied', (deathData) => {
+            this.handlePlayerDeath(deathData);
+        });
+
+        this.socket.on('gameUpdate', (updateData) => {
+            this.handleGameUpdate(updateData);
+        });
+
         // Chat events
         this.socket.on('chatMessage', (messageData) => {
             this.addChatMessage(messageData);
