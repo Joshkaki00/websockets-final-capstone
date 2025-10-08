@@ -15,10 +15,12 @@ app.use(express.static(path.join(__dirname, 'static')));
 // Game state
 const players = {};
 const bullets = [];
+const policeNPCs = [];
 const gameState = {
     players: {},
     bullets: [],
     npcs: [],
+    policeNPCs: [],
     vehicles: [],
     weapons: [],
     gameTime: Date.now()
