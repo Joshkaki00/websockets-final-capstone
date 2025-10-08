@@ -238,6 +238,11 @@ body {
     font-weight: 700;
 }
 
+.system-message.police .chat-system {
+    color: #0066ff;
+    font-weight: 700;
+}
+
 .chat-player {
     color: #00ff41;
     font-weight: 700;
