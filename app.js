@@ -57,6 +57,17 @@ class Player {
             this.respawn();
         }
         
+        // Handle wanted level decay
+        if (this.wanted > 0 && this.lastCrimeTime > 0) {
+            const timeSinceLastCrime = Date.now() - this.lastCrimeTime;
+            const decayTime = 30000; // 30 seconds per star
+            
+            if (timeSinceLastCrime > decayTime) {
+                this.decreaseWanted();
+                this.lastCrimeTime = Date.now(); // Reset timer for next decay
+            }
+        }
+        
         this.lastUpdate = Date.now();
     }
 
