@@ -477,6 +477,7 @@ class ThugsIOClient {
 
     addBullet(bulletData) {
         this.bullets.push({
+            id: bulletData.id,
             x: bulletData.x,
             y: bulletData.y,
             angle: bulletData.angle,
@@ -484,6 +485,85 @@ class ThugsIOClient {
             life: 120, // 2 seconds at 60fps
             playerId: bulletData.playerId
         });
+    }
+
+    removeBullet(bulletId) {
+        for (let i = this.bullets.length - 1; i >= 0; i--) {
+            if (this.bullets[i].id === bulletId) {
+                this.bullets.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    handlePlayerHit(hitData) {
+        // Update player health
+        if (this.players[hitData.playerId]) {
+            this.players[hitData.playerId].health = hitData.health;
+            
+            // Show damage indicator
+            this.showDamageIndicator(hitData.playerId, hitData.damage);
+            
+            // If it's the local player, update UI
+            if (hitData.playerId === this.socket.id) {
+                this.updateHealthUI();
+                
+                // Screen flash effect for taking damage
+                this.flashScreen('#ff0000', 0.3);
+            }
+        }
+        
+        // Add hit message to chat
+        const attackerName = hitData.attackerId.substring(0, 8);
+        const victimName = hitData.playerId.substring(0, 8);
+        
+        if (!hitData.died) {
+            this.addSystemMessage(`${attackerName} hit ${victimName} for ${hitData.damage} damage`, 'hit');
+        }
+    }
+
+    handlePlayerDeath(deathData) {
+        // Update player state
+        if (this.players[deathData.playerId]) {
+            this.players[deathData.playerId].isAlive = false;
+            this.players[deathData.playerId].health = 0;
+        }
+        
+        // Update killer's stats
+        if (this.players[deathData.killerId]) {
+            this.players[deathData.killerId].kills = deathData.kills;
+        }
+        
+        // Add kill message to chat
+        const killerName = deathData.killerId.substring(0, 8);
+        const victimName = deathData.playerId.substring(0, 8);
+        this.addSystemMessage(`${killerName} eliminated ${victimName}`, 'kill');
+        
+        // If local player died, show death screen
+        if (deathData.playerId === this.socket.id) {
+            this.showDeathScreen(killerName);
+        }
+        
+        // If local player got the kill, show kill notification
+        if (deathData.killerId === this.socket.id) {
+            this.showKillNotification(victimName);
+            this.updateMoneyUI();
+        }
+    }
+
+    handleGameUpdate(updateData) {
+        // Update all player data
+        Object.values(updateData.players).forEach(playerData => {
+            if (this.players[playerData.id]) {
+                Object.assign(this.players[playerData.id], playerData);
+            }
+        });
+        
+        // Update UI if local player data changed
+        if (this.localPlayer) {
+            this.updateHealthUI();
+            this.updateMoneyUI();
+        }
     }
 
     // Chat system
