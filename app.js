@@ -63,6 +63,12 @@ class Player {
         if (!this.isAlive) return false;
         
         this.health -= damage;
+        
+        // Increase wanted level when taking damage from another player
+        if (attackerId && players[attackerId] && attackerId !== this.id) {
+            players[attackerId].increaseWanted(1);
+        }
+        
         if (this.health <= 0) {
             this.health = 0;
             this.die(attackerId);
@@ -76,13 +82,62 @@ class Player {
         this.deaths++;
         this.respawnTime = Date.now() + 5000; // 5 second respawn
         
-        // Award kill to attacker
+        // Award kill to attacker and increase their wanted level
         if (killerId && players[killerId] && killerId !== this.id) {
             players[killerId].kills++;
             players[killerId].money += 100; // Money for kill
+            players[killerId].increaseWanted(2); // Big wanted increase for kills
         }
         
+        // Reset wanted level on death
+        this.wanted = 0;
+        
         console.log(`Player ${this.id} was killed by ${killerId || 'unknown'}`);
+    }
+
+    increaseWanted(amount) {
+        this.wanted = Math.min(5, this.wanted + amount); // Max 5 stars
+        this.lastCrimeTime = Date.now();
+        
+        // Spawn police if wanted level is high enough
+        if (this.wanted >= 2) {
+            this.spawnPolice();
+        }
+        
+        console.log(`Player ${this.id} wanted level: ${this.wanted}`);
+    }
+
+    decreaseWanted() {
+        if (this.wanted > 0) {
+            this.wanted = Math.max(0, this.wanted - 1);
+        }
+    }
+
+    spawnPolice() {
+        // Don't spawn too many police for one player
+        const playerPolice = policeNPCs.filter(p => p.targetId === this.id);
+        const maxPolice = this.wanted * 2; // 2 police per wanted star
+        
+        if (playerPolice.length < maxPolice) {
+            const policeCount = Math.min(2, maxPolice - playerPolice.length);
+            
+            for (let i = 0; i < policeCount; i++) {
+                // Spawn police at random location near player
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 200 + Math.random() * 300;
+                const x = this.x + Math.cos(angle) * distance;
+                const y = this.y + Math.sin(angle) * distance;
+                
+                const police = new PoliceNPC(
+                    `police_${Date.now()}_${Math.random()}`,
+                    Math.max(50, Math.min(1550, x)),
+                    Math.max(50, Math.min(1150, y)),
+                    this.id
+                );
+                
+                policeNPCs.push(police);
+            }
+        }
     }
 
     respawn() {
