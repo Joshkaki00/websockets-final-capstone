@@ -1,16 +1,20 @@
 {
-  "name": "websocket-capstone",
+  "name": "thugs-io",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A 2D multiplayer io game inspired by early GTA games",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "keywords": ["socket.io", "game", "multiplayer", "2d", "gta", "io-game"],
+  "author": "Your Name",
+  "license": "MIT",
   "dependencies": {
-    "socket.io": "^4.8.1"
+    "express": "^4.18.2",
+    "socket.io": "^4.7.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }
