@@ -303,17 +303,54 @@ io.on('connection', (socket) => {
 
 // Game loop - runs at 60 FPS
 setInterval(() => {
-    // Update game state
+    // Update players
     Object.values(players).forEach(player => {
         player.update();
     });
     
-    // You can add more game logic here like:
-    // - NPC movement
-    // - Vehicle physics
-    // - Collision detection
-    // - Wanted level updates
+    // Update bullets
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        const bullet = bullets[i];
+        if (!bullet.update()) {
+            bullets.splice(i, 1);
+            // Notify clients that bullet was removed
+            io.emit('bulletRemoved', bullet.id);
+        }
+    }
     
+    // Handle collisions
+    handlePlayerCollisions();
+    handleBulletCollisions();
+    
+    // Update game state
+    gameState.players = players;
+    gameState.bullets = bullets;
+    gameState.gameTime = Date.now();
+    
+    // Broadcast updated player positions and health
+    const playerUpdates = {};
+    Object.values(players).forEach(player => {
+        playerUpdates[player.id] = {
+            id: player.id,
+            x: player.x,
+            y: player.y,
+            angle: player.angle,
+            speed: player.speed,
+            health: player.health,
+            isAlive: player.isAlive,
+            kills: player.kills,
+            deaths: player.deaths,
+            money: player.money
+        };
+    });
+    
+    // Send periodic updates (every 10 frames = ~6 times per second)
+    if (Date.now() % 166 < 16) { // Roughly every 166ms
+        io.emit('gameUpdate', {
+            players: playerUpdates,
+            bulletCount: bullets.length
+        });
+    }
 }, 1000 / 60);
 
 // Start server
