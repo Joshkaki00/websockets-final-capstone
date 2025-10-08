@@ -643,6 +643,143 @@ class ThugsIOClient {
         document.getElementById('onlineCount').textContent = count;
     }
 
+    updateHealthUI() {
+        if (!this.localPlayer) return;
+        
+        const healthPercent = (this.localPlayer.health / 100) * 100;
+        document.getElementById('healthFill').style.width = healthPercent + '%';
+        document.getElementById('healthText').textContent = this.localPlayer.health;
+    }
+
+    updateMoneyUI() {
+        if (!this.localPlayer) return;
+        
+        document.getElementById('moneyText').textContent = '$' + this.localPlayer.money;
+    }
+
+    showDamageIndicator(playerId, damage) {
+        // Create floating damage text
+        const player = this.players[playerId];
+        if (!player) return;
+        
+        const screenX = player.x - this.camera.x;
+        const screenY = player.y - this.camera.y;
+        
+        // Create damage indicator element
+        const indicator = document.createElement('div');
+        indicator.textContent = `-${damage}`;
+        indicator.style.position = 'absolute';
+        indicator.style.left = screenX + 'px';
+        indicator.style.top = screenY + 'px';
+        indicator.style.color = '#ff0000';
+        indicator.style.fontWeight = 'bold';
+        indicator.style.fontSize = '18px';
+        indicator.style.pointerEvents = 'none';
+        indicator.style.zIndex = '1000';
+        indicator.style.textShadow = '2px 2px 4px rgba(0,0,0,0.8)';
+        
+        document.body.appendChild(indicator);
+        
+        // Animate and remove
+        let opacity = 1;
+        let y = screenY;
+        const animate = () => {
+            y -= 2;
+            opacity -= 0.05;
+            indicator.style.top = y + 'px';
+            indicator.style.opacity = opacity;
+            
+            if (opacity > 0) {
+                requestAnimationFrame(animate);
+            } else {
+                document.body.removeChild(indicator);
+            }
+        };
+        requestAnimationFrame(animate);
+    }
+
+    flashScreen(color, opacity) {
+        const flash = document.createElement('div');
+        flash.style.position = 'fixed';
+        flash.style.top = '0';
+        flash.style.left = '0';
+        flash.style.width = '100%';
+        flash.style.height = '100%';
+        flash.style.backgroundColor = color;
+        flash.style.opacity = opacity;
+        flash.style.pointerEvents = 'none';
+        flash.style.zIndex = '999';
+        
+        document.body.appendChild(flash);
+        
+        setTimeout(() => {
+            let currentOpacity = opacity;
+            const fadeOut = () => {
+                currentOpacity -= 0.05;
+                flash.style.opacity = currentOpacity;
+                
+                if (currentOpacity > 0) {
+                    requestAnimationFrame(fadeOut);
+                } else {
+                    document.body.removeChild(flash);
+                }
+            };
+            fadeOut();
+        }, 100);
+    }
+
+    showDeathScreen(killerName) {
+        const deathScreen = document.getElementById('gameOverScreen');
+        const survivalTime = Math.floor((Date.now() - this.gameStartTime) / 1000);
+        const minutes = Math.floor(survivalTime / 60);
+        const seconds = survivalTime % 60;
+        
+        document.getElementById('survivalTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        document.getElementById('totalMoney').textContent = '$' + (this.localPlayer ? this.localPlayer.money : 0);
+        document.getElementById('killCount').textContent = this.localPlayer ? this.localPlayer.kills : 0;
+        
+        deathScreen.style.display = 'flex';
+        
+        // Auto-respawn after 5 seconds
+        setTimeout(() => {
+            this.respawn();
+        }, 5000);
+    }
+
+    showKillNotification(victimName) {
+        // Create kill notification
+        const notification = document.createElement('div');
+        notification.textContent = `ELIMINATED ${victimName}`;
+        notification.style.position = 'fixed';
+        notification.style.top = '50%';
+        notification.style.left = '50%';
+        notification.style.transform = 'translate(-50%, -50%)';
+        notification.style.color = '#00ff41';
+        notification.style.fontSize = '24px';
+        notification.style.fontWeight = 'bold';
+        notification.style.textShadow = '0 0 10px rgba(0, 255, 65, 0.8)';
+        notification.style.pointerEvents = 'none';
+        notification.style.zIndex = '1001';
+        
+        document.body.appendChild(notification);
+        
+        // Animate and remove
+        setTimeout(() => {
+            let opacity = 1;
+            const fadeOut = () => {
+                opacity -= 0.05;
+                notification.style.opacity = opacity;
+                
+                if (opacity > 0) {
+                    requestAnimationFrame(fadeOut);
+                } else {
+                    document.body.removeChild(notification);
+                }
+            };
+            fadeOut();
+        }, 2000);
+    }
+
     updateLoadingText(text) {
         document.getElementById('loadingText').textContent = text;
     }
