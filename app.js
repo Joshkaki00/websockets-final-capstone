@@ -330,15 +330,17 @@ function handlePlayerCollisions() {
     }
 }
 
-// Bullet collision with players
+// Bullet collision with players and police
 function handleBulletCollisions() {
     for (let i = bullets.length - 1; i >= 0; i--) {
         const bullet = bullets[i];
         let bulletHit = false;
         
+        // Check collision with players
         Object.values(players).forEach(player => {
             if (player.isAlive && 
                 player.id !== bullet.playerId && 
+                !bullet.playerId.startsWith('police_') && // Police bullets can hit anyone
                 checkCollision(bullet, player)) {
                 
                 // Player hit by bullet
@@ -364,6 +366,28 @@ function handleBulletCollisions() {
                 bulletHit = true;
             }
         });
+        
+        // Check collision with police (only player bullets can hit police)
+        if (!bulletHit && !bullet.playerId.startsWith('police_')) {
+            policeNPCs.forEach(police => {
+                if (police.isAlive && checkCollision(bullet, police)) {
+                    const died = police.takeDamage(bullet.damage);
+                    
+                    // Award money for killing police
+                    if (died && players[bullet.playerId]) {
+                        players[bullet.playerId].money += 50;
+                        players[bullet.playerId].increaseWanted(1); // Killing police increases wanted level
+                        
+                        io.emit('policeKilled', {
+                            policeId: police.id,
+                            killerId: bullet.playerId
+                        });
+                    }
+                    
+                    bulletHit = true;
+                }
+            });
+        }
         
         if (bulletHit) {
             bullets.splice(i, 1);
