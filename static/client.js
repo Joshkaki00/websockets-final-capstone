@@ -348,6 +348,9 @@ class ThugsIOClient {
         // Draw players
         this.drawPlayers();
 
+        // Draw police NPCs
+        this.drawPolice();
+
         // Draw bullets
         this.drawBullets();
 
@@ -712,6 +715,12 @@ class ThugsIOClient {
         const healthPercent = (this.localPlayer.health / 100) * 100;
         document.getElementById('healthFill').style.width = healthPercent + '%';
         document.getElementById('healthText').textContent = this.localPlayer.health;
+    }
+
+    updateMoneyUI() {
+        if (!this.localPlayer) return;
+        
+        document.getElementById('moneyText').textContent = '$' + this.localPlayer.money;
     }
 
     updateWantedUI() {
