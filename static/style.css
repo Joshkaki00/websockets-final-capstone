@@ -216,6 +216,19 @@ body {
     word-wrap: break-word;
 }
 
+.system-message {
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.system-message.join .chat-system {
+    color: #00ff41;
+}
+
+.system-message.leave .chat-system {
+    color: #ff6b00;
+}
+
 .chat-player {
     color: #00ff41;
     font-weight: 700;
@@ -223,6 +236,11 @@ body {
 
 .chat-text {
     color: #fff;
+}
+
+.chat-system {
+    color: #ccc;
+    font-weight: 500;
 }
 
 .chat-timestamp {
