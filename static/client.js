@@ -454,15 +454,67 @@ class ThugsIOClient {
         });
     }
 
-    drawBullets() {
-        this.ctx.fillStyle = '#ffff00';
-        this.bullets.forEach(bullet => {
-            const screenX = bullet.x - this.camera.x;
-            const screenY = bullet.y - this.camera.y;
+    drawPolice() {
+        this.policeNPCs.forEach(police => {
+            if (!police.isAlive) return;
+            
+            const screenX = police.x - this.camera.x;
+            const screenY = police.y - this.camera.y;
 
-            this.ctx.beginPath();
-            this.ctx.arc(screenX, screenY, 3, 0, Math.PI * 2);
-            this.ctx.fill();
+            // Skip if police is off screen
+            if (screenX < -50 || screenX > this.canvas.width + 50 ||
+                screenY < -50 || screenY > this.canvas.height + 50) {
+                return;
+            }
+
+            this.ctx.save();
+            this.ctx.translate(screenX, screenY);
+            this.ctx.rotate(police.angle);
+
+            // Draw police body - blue color
+            this.ctx.fillStyle = '#0066ff';
+            this.ctx.fillRect(-15, -10, 30, 20);
+
+            // Draw police outline
+            this.ctx.strokeStyle = '#fff';
+            this.ctx.lineWidth = 2;
+            this.ctx.strokeRect(-15, -10, 30, 20);
+
+            // Draw police badge
+            this.ctx.fillStyle = '#ffff00';
+            this.ctx.fillRect(-5, -5, 10, 10);
+
+            // Draw weapon
+            this.ctx.fillStyle = '#333';
+            this.ctx.fillRect(15, -2, 20, 4);
+
+            this.ctx.restore();
+
+            // Draw police label
+            this.ctx.fillStyle = '#0066ff';
+            this.ctx.font = 'bold 10px Orbitron';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText('POLICE', screenX, screenY - 25);
+
+            // Draw health bar
+            const healthWidth = 30;
+            const healthHeight = 4;
+            const healthPercent = police.health / 75; // Police have 75 max health
+
+            this.ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+            this.ctx.fillRect(screenX - healthWidth/2, screenY - 35, healthWidth, healthHeight);
+            
+            this.ctx.fillStyle = 'rgba(0, 102, 255, 0.9)';
+            this.ctx.fillRect(screenX - healthWidth/2, screenY - 35, healthWidth * healthPercent, healthHeight);
+
+            // Draw target indicator if this police is chasing the local player
+            if (police.targetId === this.socket.id) {
+                this.ctx.strokeStyle = '#ff0000';
+                this.ctx.lineWidth = 3;
+                this.ctx.beginPath();
+                this.ctx.arc(screenX, screenY, 25, 0, Math.PI * 2);
+                this.ctx.stroke();
+            }
         });
     }
 
