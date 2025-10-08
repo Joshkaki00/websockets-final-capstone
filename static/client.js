@@ -120,6 +120,11 @@ class ThugsIOClient {
     setupEventListeners() {
         // Keyboard events
         document.addEventListener('keydown', (e) => {
+            // Don't handle game keys when in chat mode
+            if (this.chatMode && e.code !== 'Enter' && e.code !== 'Escape') {
+                return;
+            }
+            
             this.keys[e.code] = true;
             
             // Chat toggle
@@ -128,13 +133,24 @@ class ThugsIOClient {
                 e.preventDefault();
             }
             
-            // Prevent default for game keys
-            if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space'].includes(e.code)) {
+            // Escape to close chat
+            if (e.code === 'Escape' && this.chatMode) {
+                this.toggleChat();
+                e.preventDefault();
+            }
+            
+            // Prevent default for game keys only when not in chat mode
+            if (!this.chatMode && ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space'].includes(e.code)) {
                 e.preventDefault();
             }
         });
 
         document.addEventListener('keyup', (e) => {
+            // Don't handle game keys when in chat mode
+            if (this.chatMode && e.code !== 'Enter' && e.code !== 'Escape') {
+                return;
+            }
+            
             this.keys[e.code] = false;
         });
 
