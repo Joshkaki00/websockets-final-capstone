@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thugs.io - Crime City Multiplayer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- Game UI Overlay -->
+        <div id="gameUI">
+            <!-- Top HUD -->
+            <div id="topHUD">
+                <div id="playerStats">
+                    <div class="stat-item">
+                        <span class="stat-label">Health:</span>
+                        <div class="health-bar">
+                            <div id="healthFill" class="health-fill"></div>
+                        </div>
+                        <span id="healthText">100</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Money:</span>
+                        <span id="moneyText">$0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Wanted:</span>
+                        <div id="wantedStars">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="playerCount">
+                    <span>Players Online: <span id="onlineCount">1</span></span>
+                </div>
+            </div>
+
+            <!-- Minimap -->
+            <div id="minimap">
+                <canvas id="minimapCanvas" width="200" height="150"></canvas>
+                <div id="minimapLabel">Crime City</div>
+            </div>
+
+            <!-- Weapon HUD -->
+            <div id="weaponHUD">
+                <div id="currentWeapon">
+                    <span id="weaponName">Pistol</span>
+                    <div id="ammoCount">∞</div>
+                </div>
+            </div>
+
+            <!-- Chat System -->
+            <div id="chatContainer">
+                <div id="chatMessages"></div>
+                <div id="chatInput" style="display: none;">
+                    <input type="text" id="messageInput" placeholder="Type a message..." maxlength="100">
+                    <button id="sendButton">Send</button>
+                </div>
+            </div>
+
+            <!-- Controls Help -->
+            <div id="controlsHelp">
+                <div class="controls-title">Controls:</div>
+                <div class="control-item">WASD - Move</div>
+                <div class="control-item">Mouse - Aim</div>
+                <div class="control-item">Click - Shoot</div>
+                <div class="control-item">Enter - Chat</div>
+                <div class="control-item">F - Enter Vehicle</div>
+            </div>
+        </div>
+
+        <!-- Main Game Canvas -->
+        <canvas id="gameCanvas" width="1600" height="1200"></canvas>
+
+        <!-- Loading Screen -->
+        <div id="loadingScreen">
+            <div class="loading-content">
+                <h1>THUGS.IO</h1>
+                <div class="loading-subtitle">Crime City Awaits</div>
+                <div class="loading-bar">
+                    <div id="loadingProgress" class="loading-progress"></div>
+                </div>
+                <div id="loadingText">Connecting to server...</div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" style="display: none;">
+            <div class="gameover-content">
+                <h2>WASTED</h2>
+                <div class="gameover-stats">
+                    <div>Time Survived: <span id="survivalTime">0:00</span></div>
+                    <div>Money Earned: <span id="totalMoney">$0</span></div>
+                    <div>Players Eliminated: <span id="killCount">0</span></div>
+                </div>
+                <button id="respawnButton">Respawn</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>
