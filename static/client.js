@@ -714,10 +714,51 @@ class ThugsIOClient {
         document.getElementById('healthText').textContent = this.localPlayer.health;
     }
 
-    updateMoneyUI() {
+    updateWantedUI() {
         if (!this.localPlayer) return;
         
-        document.getElementById('moneyText').textContent = '$' + this.localPlayer.money;
+        const stars = document.querySelectorAll('#wantedStars .star');
+        stars.forEach((star, index) => {
+            if (index < this.localPlayer.wanted) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+
+    showWantedNotification(wantedLevel) {
+        const notification = document.createElement('div');
+        notification.textContent = `WANTED LEVEL ${wantedLevel}`;
+        notification.style.position = 'fixed';
+        notification.style.top = '30%';
+        notification.style.left = '50%';
+        notification.style.transform = 'translate(-50%, -50%)';
+        notification.style.color = '#ff0000';
+        notification.style.fontSize = '28px';
+        notification.style.fontWeight = 'bold';
+        notification.style.textShadow = '0 0 15px rgba(255, 0, 0, 0.8)';
+        notification.style.pointerEvents = 'none';
+        notification.style.zIndex = '1001';
+        notification.style.animation = 'pulse 0.5s ease-in-out';
+        
+        document.body.appendChild(notification);
+        
+        // Animate and remove
+        setTimeout(() => {
+            let opacity = 1;
+            const fadeOut = () => {
+                opacity -= 0.05;
+                notification.style.opacity = opacity;
+                
+                if (opacity > 0) {
+                    requestAnimationFrame(fadeOut);
+                } else {
+                    document.body.removeChild(notification);
+                }
+            };
+            fadeOut();
+        }, 2000);
     }
 
     showDamageIndicator(playerId, damage) {
