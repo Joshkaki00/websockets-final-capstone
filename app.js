@@ -40,6 +40,7 @@ class Player {
         this.weapon = 'pistol';
         this.money = 0;
         this.wanted = 0;
+        this.lastCrimeTime = 0;
         this.inVehicle = false;
         this.vehicleId = null;
         this.lastUpdate = Date.now();
