@@ -138,6 +138,14 @@ class ThugsIOClient {
             this.handleGameUpdate(updateData);
         });
 
+        this.socket.on('policeKilled', (data) => {
+            this.handlePoliceKilled(data);
+        });
+
+        this.socket.on('wantedLevelChanged', (data) => {
+            this.handleWantedLevelChanged(data);
+        });
+
         // Chat events
         this.socket.on('chatMessage', (messageData) => {
             this.addChatMessage(messageData);
