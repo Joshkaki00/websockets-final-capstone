@@ -229,6 +229,15 @@ body {
     color: #ff6b00;
 }
 
+.system-message.hit .chat-system {
+    color: #ffff00;
+}
+
+.system-message.kill .chat-system {
+    color: #ff0000;
+    font-weight: 700;
+}
+
 .chat-player {
     color: #00ff41;
     font-weight: 700;
