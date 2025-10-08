@@ -384,8 +384,19 @@ class ThugsIOClient {
             this.ctx.translate(screenX, screenY);
             this.ctx.rotate(player.angle);
 
-            // Draw player body
-            this.ctx.fillStyle = player.id === this.socket.id ? '#00ff41' : '#ff6b00';
+            // Draw player body with different colors based on state
+            if (!player.isAlive) {
+                // Dead player - gray and transparent
+                this.ctx.globalAlpha = 0.5;
+                this.ctx.fillStyle = '#666';
+            } else if (player.id === this.socket.id) {
+                // Local player - green
+                this.ctx.fillStyle = '#00ff41';
+            } else {
+                // Other players - orange
+                this.ctx.fillStyle = '#ff6b00';
+            }
+            
             this.ctx.fillRect(-15, -10, 30, 20);
 
             // Draw player outline
@@ -393,14 +404,16 @@ class ThugsIOClient {
             this.ctx.lineWidth = 2;
             this.ctx.strokeRect(-15, -10, 30, 20);
 
-            // Draw weapon
-            this.ctx.fillStyle = '#888';
-            this.ctx.fillRect(15, -2, 20, 4);
+            // Draw weapon only if alive
+            if (player.isAlive) {
+                this.ctx.fillStyle = '#888';
+                this.ctx.fillRect(15, -2, 20, 4);
+            }
 
             this.ctx.restore();
 
             // Draw player name/ID
-            this.ctx.fillStyle = '#fff';
+            this.ctx.fillStyle = player.isAlive ? '#fff' : '#666';
             this.ctx.font = '12px Orbitron';
             this.ctx.textAlign = 'center';
             this.ctx.fillText(
@@ -409,16 +422,23 @@ class ThugsIOClient {
                 screenY - 25
             );
 
-            // Draw health bar
-            const healthWidth = 30;
-            const healthHeight = 4;
-            const healthPercent = player.health / 100;
+            // Draw health bar only for alive players
+            if (player.isAlive) {
+                const healthWidth = 30;
+                const healthHeight = 4;
+                const healthPercent = player.health / 100;
 
-            this.ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
-            this.ctx.fillRect(screenX - healthWidth/2, screenY - 35, healthWidth, healthHeight);
-            
-            this.ctx.fillStyle = 'rgba(0, 255, 65, 0.9)';
-            this.ctx.fillRect(screenX - healthWidth/2, screenY - 35, healthWidth * healthPercent, healthHeight);
+                this.ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+                this.ctx.fillRect(screenX - healthWidth/2, screenY - 35, healthWidth, healthHeight);
+                
+                this.ctx.fillStyle = 'rgba(0, 255, 65, 0.9)';
+                this.ctx.fillRect(screenX - healthWidth/2, screenY - 35, healthWidth * healthPercent, healthHeight);
+            } else {
+                // Draw "DEAD" text
+                this.ctx.fillStyle = '#ff0000';
+                this.ctx.font = 'bold 10px Orbitron';
+                this.ctx.fillText('DEAD', screenX, screenY - 35);
+            }
         });
     }
 
