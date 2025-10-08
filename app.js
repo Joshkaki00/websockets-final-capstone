@@ -224,11 +224,14 @@ io.on('connection', (socket) => {
 
     // Handle player movement
     socket.on('playerMove', (data) => {
-        if (players[socket.id]) {
+        if (players[socket.id] && players[socket.id].isAlive) {
             // Validate movement data
             const player = players[socket.id];
-            player.x = Math.max(0, Math.min(1600, data.x)); // Clamp to game world bounds
-            player.y = Math.max(0, Math.min(1200, data.y));
+            const newX = Math.max(player.radius, Math.min(1600 - player.radius, data.x));
+            const newY = Math.max(player.radius, Math.min(1200 - player.radius, data.y));
+            
+            player.x = newX;
+            player.y = newY;
             player.angle = data.angle;
             player.speed = data.speed;
             
@@ -238,21 +241,37 @@ io.on('connection', (socket) => {
                 x: player.x,
                 y: player.y,
                 angle: player.angle,
-                speed: player.speed
+                speed: player.speed,
+                health: player.health,
+                isAlive: player.isAlive
             });
         }
     });
 
     // Handle shooting
     socket.on('playerShoot', (data) => {
-        if (players[socket.id]) {
+        if (players[socket.id] && players[socket.id].isAlive) {
             const player = players[socket.id];
+            const bulletId = `${socket.id}_${Date.now()}_${Math.random()}`;
+            
+            // Create bullet
+            const bullet = new Bullet(
+                bulletId,
+                player.x + Math.cos(data.angle) * 20, // Spawn bullet in front of player
+                player.y + Math.sin(data.angle) * 20,
+                data.angle,
+                player.id
+            );
+            
+            bullets.push(bullet);
+            
             // Broadcast bullet to all players
             io.emit('bulletFired', {
+                id: bulletId,
                 playerId: socket.id,
-                x: player.x,
-                y: player.y,
-                angle: data.angle,
+                x: bullet.x,
+                y: bullet.y,
+                angle: bullet.angle,
                 weapon: player.weapon
             });
         }
