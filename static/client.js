@@ -89,12 +89,18 @@ class ThugsIOClient {
             console.log('Player joined:', player.id);
             this.players[player.id] = player;
             this.updatePlayerCount();
+            
+            // Add system message to chat
+            this.addSystemMessage(`Player ${player.id.substring(0, 8)} joined the game`, 'join');
         });
 
         this.socket.on('playerLeft', (playerId) => {
             console.log('Player left:', playerId);
             delete this.players[playerId];
             this.updatePlayerCount();
+            
+            // Add system message to chat
+            this.addSystemMessage(`Player ${playerId.substring(0, 8)} left the game`, 'leave');
         });
 
         this.socket.on('playerUpdate', (playerData) => {
