@@ -14,8 +14,10 @@ app.use(express.static(path.join(__dirname, 'static')));
 
 // Game state
 const players = {};
+const bullets = [];
 const gameState = {
     players: {},
+    bullets: [],
     npcs: [],
     vehicles: [],
     weapons: [],
