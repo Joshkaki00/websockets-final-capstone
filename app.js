@@ -163,6 +163,101 @@ class Player {
     }
 }
 
+// Police NPC class
+class PoliceNPC {
+    constructor(id, x, y, targetId) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.angle = 0;
+        this.speed = 0;
+        this.maxSpeed = 4; // Slightly slower than players
+        this.health = 75; // Less health than players
+        this.targetId = targetId;
+        this.radius = 15;
+        this.lastShot = 0;
+        this.shootCooldown = 1500; // 1.5 seconds between shots
+        this.isAlive = true;
+        this.aggroRange = 300; // How close they need to be to start chasing
+        this.shootRange = 150; // How close to start shooting
+    }
+
+    update() {
+        if (!this.isAlive) return;
+
+        const target = players[this.targetId];
+        if (!target || !target.isAlive || target.wanted === 0) {
+            // Target is dead, disconnected, or no longer wanted - remove this police
+            this.isAlive = false;
+            return;
+        }
+
+        const dx = target.x - this.x;
+        const dy = target.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Only chase if target is within aggro range
+        if (distance < this.aggroRange) {
+            // Move towards target
+            this.angle = Math.atan2(dy, dx);
+            
+            if (distance > 50) { // Don't get too close
+                this.x += Math.cos(this.angle) * this.maxSpeed;
+                this.y += Math.sin(this.angle) * this.maxSpeed;
+                this.speed = this.maxSpeed;
+            } else {
+                this.speed = 0;
+            }
+
+            // Keep in bounds
+            this.x = Math.max(this.radius, Math.min(1600 - this.radius, this.x));
+            this.y = Math.max(this.radius, Math.min(1200 - this.radius, this.y));
+
+            // Shoot at target if in range
+            if (distance < this.shootRange && Date.now() - this.lastShot > this.shootCooldown) {
+                this.shootAtTarget(target);
+                this.lastShot = Date.now();
+            }
+        }
+    }
+
+    shootAtTarget(target) {
+        const bulletId = `police_${this.id}_${Date.now()}_${Math.random()}`;
+        
+        // Create bullet aimed at target
+        const bullet = new Bullet(
+            bulletId,
+            this.x + Math.cos(this.angle) * 20,
+            this.y + Math.sin(this.angle) * 20,
+            this.angle,
+            this.id
+        );
+        
+        bullet.damage = 20; // Police do slightly less damage
+        bullets.push(bullet);
+        
+        // Broadcast bullet
+        io.emit('bulletFired', {
+            id: bulletId,
+            playerId: this.id,
+            x: bullet.x,
+            y: bullet.y,
+            angle: bullet.angle,
+            weapon: 'police_pistol',
+            isPolice: true
+        });
+    }
+
+    takeDamage(damage) {
+        this.health -= damage;
+        if (this.health <= 0) {
+            this.isAlive = false;
+            return true; // Police died
+        }
+        return false;
+    }
+}
+
 // Bullet class
 class Bullet {
     constructor(id, x, y, angle, playerId) {
