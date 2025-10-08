@@ -517,6 +517,27 @@ class ThugsIOClient {
         }
     }
 
+    addSystemMessage(message, type = 'system') {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message system-message ${type}`;
+
+        const timestamp = new Date().toLocaleTimeString();
+
+        messageDiv.innerHTML = `
+            <span class="chat-timestamp">[${timestamp}]</span>
+            <span class="chat-system">${message}</span>
+        `;
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Remove old messages (keep last 50)
+        while (chatMessages.children.length > 50) {
+            chatMessages.removeChild(chatMessages.firstChild);
+        }
+    }
+
     // UI Updates
     updatePlayerCount() {
         const count = Object.keys(this.players).length;
